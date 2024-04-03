@@ -7,7 +7,9 @@ import (
 )
 
 var DefaultWinSettings = WindowData{
+	Title:       "Window",
 	HasTitleBar: true, Closable: true, Movable: true,
+	Resizable:        true,
 	TitleColor:       color.RGBA{R: 255, G: 255, B: 255, A: 255},
 	TitleBGColor:     color.RGBA{R: 32, G: 32, B: 32, A: 255},
 	TitleButtonColor: color.RGBA{R: 255, G: 255, B: 255, A: 255},
@@ -26,7 +28,7 @@ type windowObject struct {
 
 	drawCache *ebiten.Image
 
-	open,
+	open, focused,
 	dirty bool
 }
 
@@ -36,7 +38,7 @@ type WindowData struct {
 	StartPosition,
 	StartSize V2i
 
-	Closable, Focused, AutoCentered,
+	Closable, AutoCentered,
 	Borderless, Movable, CachePersist,
 	Resizable, KeepPosition, HasTitleBar bool
 
