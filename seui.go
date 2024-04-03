@@ -10,6 +10,12 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
+const (
+	titleBarSize        = 24
+	halfTitleBarSize    = titleBarSize / 2
+	quarterTitleBarSize = titleBarSize / 4
+)
+
 var (
 	windowList  map[string]*windowObject
 	openWindows []*windowObject
@@ -41,16 +47,19 @@ func DrawWindows(screen *ebiten.Image) {
 			continue
 		}
 
-		tr := V2i{X: win.position.X + win.size.X - 4, Y: win.position.Y + 4}
+		vector.DrawFilledRect(screen, float32(win.position.X), float32(win.position.Y),
+			float32(win.size.X), titleBarSize, win.win.TitleBGColor, false)
+
+		tr := V2i{X: win.position.X + win.size.X - quarterTitleBarSize, Y: win.position.Y + quarterTitleBarSize}
 
 		//Draw close X
 		if win.win.Closable {
 			var path vector.Path
 			path.MoveTo(float32(tr.X), float32(tr.Y))
-			path.LineTo(float32(tr.X-16), float32(tr.Y+16))
+			path.LineTo(float32(tr.X-halfTitleBarSize), float32(tr.Y+halfTitleBarSize))
 
-			path.MoveTo(float32(tr.X-16), float32(tr.Y))
-			path.LineTo(float32(tr.X), float32(tr.Y+16))
+			path.MoveTo(float32(tr.X-halfTitleBarSize), float32(tr.Y))
+			path.LineTo(float32(tr.X), float32(tr.Y+halfTitleBarSize))
 
 			path.Close()
 
@@ -59,11 +68,12 @@ func DrawWindows(screen *ebiten.Image) {
 			vop := &vector.StrokeOptions{Width: 5, LineJoin: vector.LineJoinRound, LineCap: vector.LineCapRound}
 			vs, is = path.AppendVerticesAndIndicesForStroke(nil, nil, vop)
 
+			red, green, blue, alpha := win.win.TitleButtonColor.RGBA()
 			for i := range vs {
-				vs[i].ColorR = 1
-				vs[i].ColorG = 0
-				vs[i].ColorB = 0
-				vs[i].ColorA = 1
+				vs[i].ColorR = float32(red / 255)
+				vs[i].ColorG = float32(green / 255)
+				vs[i].ColorB = float32(blue / 255)
+				vs[i].ColorA = float32(alpha / 255)
 			}
 
 			top := &ebiten.DrawTrianglesOptions{AntiAlias: true, FillRule: ebiten.FillAll}
@@ -78,7 +88,11 @@ func AddWindow(windowID string, window WindowData) error {
 	defer windowsLock.Unlock()
 
 	newWin := &windowObject{win: window, dirty: true}
+
 	newWin.size = newWin.win.StartSize
+	if window.HasTitleBar {
+		newWin.size.Y += titleBarSize
+	}
 	newWin.position = newWin.win.StartPosition
 	windowList[windowID] = newWin
 
@@ -87,7 +101,7 @@ func AddWindow(windowID string, window WindowData) error {
 		return errors.New("unable to create window draw cache")
 	}
 
-	newWin.drawCache.Fill(color.RGBA{128, 128, 128, 255})
+	newWin.drawCache.Fill(newWin.win.BGColor)
 	return nil
 }
 
