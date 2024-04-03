@@ -23,8 +23,9 @@ const (
 )
 
 var (
-	windowList  map[string]*windowObject
-	openWindows []*windowObject
+	screenWidth, screenHeight int
+	windowList                map[string]*windowObject
+	openWindows               []*windowObject
 
 	windowsLock sync.Mutex
 
@@ -222,4 +223,40 @@ func CloseWindow(windowID string) error {
 	}
 
 	return errors.New("unable to find window")
+}
+
+// Call his in Ebiten Layout
+func ClampWindows(width, height int) {
+	windowsLock.Lock()
+	defer windowsLock.Unlock()
+
+	if width == screenWidth &&
+		height == screenHeight {
+		return
+	}
+
+	screenWidth = width
+	screenHeight = height
+
+	for _, win := range windowList {
+		if win.size.X > screenWidth {
+			win.size.X = screenWidth
+		}
+		if win.size.Y > screenHeight {
+			win.size.Y = screenHeight
+		}
+
+		if win.position.X+win.size.X > screenWidth {
+			win.position.X = (screenWidth - win.size.X)
+		}
+		if win.position.Y+win.size.Y > screenHeight {
+			win.position.Y = (screenHeight - win.size.Y)
+		}
+	}
+}
+
+func UpdateScreenSize(width, height int) {
+	windowsLock.Lock()
+	defer windowsLock.Unlock()
+
 }
