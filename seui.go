@@ -1,12 +1,16 @@
 package seGUI
 
 import (
+	"bytes"
 	"errors"
 	"image"
 	"image/color"
+	"log"
 	"sync"
 
+	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
 	"github.com/hajimehoshi/ebiten/v2"
+	"github.com/hajimehoshi/ebiten/v2/text/v2"
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
@@ -14,6 +18,8 @@ const (
 	titleBarSize        = 24
 	halfTitleBarSize    = titleBarSize / 2
 	quarterTitleBarSize = titleBarSize / 4
+	normalFontSize      = 18
+	bigFontSize         = 24
 )
 
 var (
@@ -24,11 +30,19 @@ var (
 
 	whiteImage    = ebiten.NewImage(3, 3)
 	whiteSubImage = whiteImage.SubImage(image.Rect(1, 1, 2, 2)).(*ebiten.Image)
+
+	mplusFaceSource *text.GoTextFaceSource
 )
 
 func init() {
 	windowList = map[string]*windowObject{}
 	whiteImage.Fill(color.White)
+
+	s, err := text.NewGoTextFaceSource(bytes.NewReader(fonts.MPlus1pRegular_ttf))
+	if err != nil {
+		log.Fatal(err)
+	}
+	mplusFaceSource = s
 }
 
 // Run this in ebiten draw(), pass "screen"
@@ -47,13 +61,29 @@ func DrawWindows(screen *ebiten.Image) {
 			continue
 		}
 
+		//Title bg color
 		vector.DrawFilledRect(screen, float32(win.position.X), float32(win.position.Y),
 			float32(win.size.X), titleBarSize, win.win.TitleBGColor, false)
 
-		tr := V2i{X: win.position.X + win.size.X - quarterTitleBarSize, Y: win.position.Y + quarterTitleBarSize}
+		//Title text
+		loo := text.LayoutOptions{
+			LineSpacing:    0,
+			PrimaryAlign:   text.AlignStart,
+			SecondaryAlign: text.AlignStart,
+		}
+		tdop := ebiten.DrawImageOptions{}
+		tdop.GeoM.Translate(float64(win.position.X+2), float64(win.position.Y))
+
+		top := &text.DrawOptions{DrawImageOptions: tdop, LayoutOptions: loo}
+		text.Draw(screen, win.win.Title, &text.GoTextFace{
+			Source: mplusFaceSource,
+			Size:   normalFontSize,
+		}, top)
 
 		//Draw close X
 		if win.win.Closable {
+
+			tr := V2i{X: win.position.X + win.size.X - quarterTitleBarSize, Y: win.position.Y + quarterTitleBarSize}
 			var path vector.Path
 			path.MoveTo(float32(tr.X), float32(tr.Y))
 			path.LineTo(float32(tr.X-halfTitleBarSize), float32(tr.Y+halfTitleBarSize))
