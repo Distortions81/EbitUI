@@ -30,7 +30,7 @@ type WindowData struct {
 
 	Closable, Focused, AutoCentered,
 	Borderless, Movable, CachePersist,
-	Resizable, KeepPosition bool
+	Resizable, KeepPosition, HasTitleBar bool
 
 	TitleColor,
 	TitleBGColor,
