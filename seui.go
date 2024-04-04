@@ -14,14 +14,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2/vector"
 )
 
-const (
-	titleBarSize        = 24
-	halfTitleBarSize    = titleBarSize / 2
-	quarterTitleBarSize = titleBarSize / 4
-	normalFontSize      = 18
-	bigFontSize         = 24
-)
-
 var (
 	screenWidth, screenHeight int
 	windowList                map[string]*windowObject
@@ -64,33 +56,33 @@ func DrawWindows(screen *ebiten.Image) {
 
 		//Title bg color
 		vector.DrawFilledRect(screen, float32(win.position.X), float32(win.position.Y),
-			float32(win.size.X), titleBarSize, win.win.TitleBGColor, false)
+			float32(win.size.X), float32(win.win.TitleSize), win.win.TitleBGColor, false)
 
 		//Title text
 		loo := text.LayoutOptions{
-			LineSpacing:    0,
+			LineSpacing:    1,
 			PrimaryAlign:   text.AlignStart,
 			SecondaryAlign: text.AlignStart,
 		}
 		tdop := ebiten.DrawImageOptions{}
-		tdop.GeoM.Translate(float64(win.position.X+2), float64(win.position.Y))
+		tdop.GeoM.Translate(float64(win.position.X+2), float64(win.position.Y-2))
 
 		top := &text.DrawOptions{DrawImageOptions: tdop, LayoutOptions: loo}
 		text.Draw(screen, win.win.Title, &text.GoTextFace{
 			Source: mplusFaceSource,
-			Size:   normalFontSize,
+			Size:   float64(win.win.TitleSize - 4),
 		}, top)
 
 		//Draw close X
 		if win.win.Closable {
 
-			tr := V2i{X: win.position.X + win.size.X - quarterTitleBarSize, Y: win.position.Y + quarterTitleBarSize}
+			tr := V2i{X: win.position.X + win.size.X - win.win.TitleSize/4, Y: win.position.Y + win.win.TitleSize/4}
 			var path vector.Path
 			path.MoveTo(float32(tr.X), float32(tr.Y))
-			path.LineTo(float32(tr.X-halfTitleBarSize), float32(tr.Y+halfTitleBarSize))
+			path.LineTo(float32(tr.X-win.win.TitleSize/2), float32(tr.Y+win.win.TitleSize/2))
 
-			path.MoveTo(float32(tr.X-halfTitleBarSize), float32(tr.Y))
-			path.LineTo(float32(tr.X), float32(tr.Y+halfTitleBarSize))
+			path.MoveTo(float32(tr.X-win.win.TitleSize/2), float32(tr.Y))
+			path.LineTo(float32(tr.X), float32(tr.Y+win.win.TitleSize/2))
 
 			path.Close()
 
@@ -122,7 +114,7 @@ func AddWindow(windowID string, window WindowData) error {
 
 	newWin.size = newWin.win.StartSize
 	if window.HasTitleBar {
-		newWin.size.Y += titleBarSize
+		newWin.size.Y += window.TitleSize
 	}
 	newWin.position = newWin.win.StartPosition
 	windowList[windowID] = newWin
@@ -143,34 +135,6 @@ func DeleteWindow(windowID string) error {
 
 	if windowList[windowID] != nil {
 		delete(windowList, windowID)
-		return nil
-	}
-
-	return errors.New("unable to find window")
-}
-
-// Update a window. Returns true if updated
-func UpdateWindow(windowID string, window WindowData) error {
-	windowsLock.Lock()
-	defer windowsLock.Unlock()
-
-	if windowList[windowID] != nil {
-		windowList[windowID].win = window
-		windowList[windowID].dirty = true
-		return nil
-	}
-
-	return errors.New("unable to find window")
-}
-
-// Update window items. Returns true if updated
-func UpdateWindowItems(windowID string, windowItems []WindowItemData) error {
-	windowsLock.Lock()
-	defer windowsLock.Unlock()
-
-	if windowList[windowID] != nil {
-		windowList[windowID].items = windowItems
-		windowList[windowID].dirty = true
 		return nil
 	}
 
@@ -259,4 +223,5 @@ func UpdateScreenSize(width, height int) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
 
+	screenWidth, screenHeight = width, height
 }

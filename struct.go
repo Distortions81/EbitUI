@@ -8,6 +8,7 @@ import (
 
 var DefaultWinSettings = WindowData{
 	Title:       "Window",
+	TitleSize:   24,
 	HasTitleBar: true, Closable: true, Movable: true,
 	Resizable:        true,
 	TitleColor:       color.RGBA{R: 255, G: 255, B: 255, A: 255},
@@ -33,7 +34,8 @@ type windowObject struct {
 }
 
 type WindowData struct {
-	Title string
+	Title     string
+	TitleSize int
 
 	StartPosition,
 	StartSize V2i
