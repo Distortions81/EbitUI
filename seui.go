@@ -51,11 +51,13 @@ func Start(width, height int) {
 	nw := DefaultWinSettings
 	nw.StartSize = V2i{X: width, Y: height}
 
-	//Add the window
-	err = AddWindow("hud", nw)
-	if err != nil {
-		log.Fatal(err)
-	}
+	go func() {
+		//Add the window
+		err = AddWindow("hud", nw)
+		if err != nil {
+			log.Fatal(err)
+		}
+	}()
 }
 
 // Run this in ebiten draw(), pass "screen"
@@ -218,6 +220,10 @@ func clampWindows(width, height int) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
 
+	if width == viewerWidth && height == viewerHeight {
+		return
+	}
+
 	if width == viewerWidth &&
 		height == viewerHeight {
 		return
@@ -244,7 +250,5 @@ func clampWindows(width, height int) {
 }
 
 func UpdateViewerSize(width, height int) {
-	if width != viewerWidth || height != viewerHeight {
-		clampWindows(width, height)
-	}
+	clampWindows(width, height)
 }
