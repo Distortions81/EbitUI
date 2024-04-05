@@ -26,7 +26,8 @@ type windowObject struct {
 	position,
 	size V2i
 
-	items []WindowItemData
+	items        []WindowItemData
+	selectedItem *WindowItemData
 
 	drawCache *ebiten.Image
 
@@ -56,6 +57,10 @@ type WindowItemData struct {
 	IType    ITYPE
 	FlowData FlowDataType
 
+	Disabled, Hidden bool
+
+	Tooltip string
+
 	Label    string
 	Size     V2i
 	Position V2i
@@ -68,6 +73,8 @@ type WindowItemData struct {
 type FlowDataType struct {
 	Dir        FLOW_DIR
 	Scrollable FLOW_DIR
+	Resizeable bool
+	Children   []WindowItemData
 }
 
 type V2i struct {

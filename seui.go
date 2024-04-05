@@ -6,6 +6,7 @@ import (
 	"image"
 	"image/color"
 	"log"
+	"strings"
 	"sync"
 
 	"github.com/hajimehoshi/ebiten/examples/resources/fonts"
@@ -15,7 +16,7 @@ import (
 )
 
 var (
-	screenWidth, screenHeight int
+	viewerWidth, viewerHeight int
 	windowList                map[string]*windowObject
 	openWindows               []*windowObject
 
@@ -29,7 +30,7 @@ var (
 
 // Init, with starting screen width and height
 func Start(width, height int) {
-	UpdateScreenSize(width, height)
+	UpdateViewerSize(width, height)
 
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
@@ -45,6 +46,16 @@ func Start(width, height int) {
 		log.Fatal(err)
 	}
 	mplusFaceSource = s
+
+	//Create window data
+	nw := DefaultWinSettings
+	nw.StartSize = V2i{X: width, Y: height}
+
+	//Add the window
+	err = AddWindow("hud", nw)
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 // Run this in ebiten draw(), pass "screen"
@@ -118,6 +129,7 @@ func DrawWindows(screen *ebiten.Image) {
 func AddWindow(windowID string, window WindowData) error {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
+	windowID = strings.ToLower(windowID)
 
 	newWin := &windowObject{win: window, dirty: true}
 
@@ -141,6 +153,7 @@ func AddWindow(windowID string, window WindowData) error {
 func DeleteWindow(windowID string) error {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
+	windowID = strings.ToLower(windowID)
 
 	if windowList[windowID] != nil {
 		delete(windowList, windowID)
@@ -153,6 +166,7 @@ func DeleteWindow(windowID string) error {
 func OpenWindow(windowID string) error {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
+	windowID = strings.ToLower(windowID)
 
 	window := windowList[windowID]
 
@@ -176,6 +190,7 @@ func OpenWindow(windowID string) error {
 func CloseWindow(windowID string) error {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
+	windowID = strings.ToLower(windowID)
 
 	window := windowList[windowID]
 
@@ -203,31 +218,33 @@ func clampWindows(width, height int) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
 
-	if width == screenWidth &&
-		height == screenHeight {
+	if width == viewerWidth &&
+		height == viewerHeight {
 		return
 	}
 
-	screenWidth = width
-	screenHeight = height
+	viewerWidth = width
+	viewerHeight = height
 
 	for _, win := range windowList {
-		if win.size.X > screenWidth {
-			win.size.X = screenWidth
+		if win.size.X > viewerWidth {
+			win.size.X = viewerWidth
 		}
-		if win.size.Y > screenHeight {
-			win.size.Y = screenHeight
+		if win.size.Y > viewerHeight {
+			win.size.Y = viewerHeight
 		}
 
-		if win.position.X+win.size.X > screenWidth {
-			win.position.X = (screenWidth - win.size.X)
+		if win.position.X+win.size.X > viewerWidth {
+			win.position.X = (viewerWidth - win.size.X)
 		}
-		if win.position.Y+win.size.Y > screenHeight {
-			win.position.Y = (screenHeight - win.size.Y)
+		if win.position.Y+win.size.Y > viewerHeight {
+			win.position.Y = (viewerHeight - win.size.Y)
 		}
 	}
 }
 
-func UpdateScreenSize(width, height int) {
-	clampWindows(width, height)
+func UpdateViewerSize(width, height int) {
+	if width != viewerWidth || height != viewerHeight {
+		clampWindows(width, height)
+	}
 }
