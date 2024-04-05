@@ -57,6 +57,13 @@ func Start(width, height int) {
 
 }
 
+func updateWindowCache(win *windowObject) {
+	if win.dirty {
+		win.dirty = false
+		win.drawCache.Fill(win.win.BGColor)
+	}
+}
+
 // Run this in ebiten draw(), pass "screen"
 func DrawWindows(screen *ebiten.Image) {
 
@@ -64,6 +71,9 @@ func DrawWindows(screen *ebiten.Image) {
 	defer windowsLock.Unlock()
 
 	for _, win := range openWindows {
+
+		updateWindowCache(win)
+
 		//Draw window
 		op := &ebiten.DrawImageOptions{}
 		op.GeoM.Translate(float64(win.position.X), float64(win.position.Y))
@@ -212,41 +222,52 @@ func CloseWindow(windowID string) error {
 	return errors.New("unable to find window")
 }
 
-// Call his in Ebiten Layout
+// Call this in Ebiten Layout
 func clampWindows(width, height int) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
+
+	if width < minSizeX {
+		width = minSizeX
+	}
+	if height < minSizeY {
+		height = minSizeY
+	}
 
 	if width == viewerWidth && height == viewerHeight {
 		return
 	}
 
-	if width == viewerWidth &&
-		height == viewerHeight {
-		return
-	}
+	viewerWidth, viewerHeight = width, height
 
-	viewerWidth = width
-	viewerHeight = height
-
+	changedSize := false
 	for w, win := range windowList {
 		if win.id == "hud" {
+			win.drawCache = ebiten.NewImage(width, height)
+			win.dirty = true
 			windowList[w].size = V2i{X: width, Y: height}
 			continue
 		}
 
-		if win.size.X > viewerWidth {
-			win.size.X = viewerWidth
+		if win.size.X > width {
+			win.size.X = width
+			changedSize = true
 		}
-		if win.size.Y > viewerHeight {
-			win.size.Y = viewerHeight
+		if win.size.Y > height {
+			win.size.Y = height
+			changedSize = true
 		}
 
-		if win.position.X+win.size.X > viewerWidth {
-			win.position.X = (viewerWidth - win.size.X)
+		if win.position.X+win.size.X > width {
+			win.position.X = (width - win.size.X)
 		}
-		if win.position.Y+win.size.Y > viewerHeight {
-			win.position.Y = (viewerHeight - win.size.Y)
+		if win.position.Y+win.size.Y > height {
+			win.position.Y = (height - win.size.Y)
+		}
+
+		if changedSize {
+			win.drawCache = ebiten.NewImage(win.size.X, win.size.Y)
+			win.dirty = true
 		}
 	}
 }
