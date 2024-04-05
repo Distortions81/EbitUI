@@ -229,7 +229,12 @@ func clampWindows(width, height int) {
 	viewerWidth = width
 	viewerHeight = height
 
-	for _, win := range windowList {
+	for w, win := range windowList {
+		if win.id == "hud" {
+			windowList[w].size = V2i{X: width, Y: height}
+			continue
+		}
+
 		if win.size.X > viewerWidth {
 			win.size.X = viewerWidth
 		}
