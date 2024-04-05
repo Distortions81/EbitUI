@@ -1,5 +1,8 @@
 package seGUI
 
+const minSizeX = 1200
+const minSizeY = 700
+
 type ITYPE int
 
 const (
