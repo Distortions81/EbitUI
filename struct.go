@@ -18,7 +18,8 @@ var DefaultWinSettings = WindowData{
 }
 
 type windowObject struct {
-	id string
+	id    string
+	layer int
 
 	win WindowData
 
@@ -29,7 +30,7 @@ type windowObject struct {
 
 	drawCache *ebiten.Image
 
-	open, focused,
+	open, focused, mouseon,
 	dirty bool
 }
 
@@ -52,13 +53,21 @@ type WindowData struct {
 }
 
 type WindowItemData struct {
-	Text     string
+	IType    ITYPE
+	FlowData FlowDataType
+
+	Label    string
 	Size     V2i
 	Position V2i
 
 	Color, HoverColor, ActionColor color.Color
 
 	Action func()
+}
+
+type FlowDataType struct {
+	Dir        FLOW_DIR
+	Scrollable FLOW_DIR
 }
 
 type V2i struct {
