@@ -33,7 +33,6 @@ func Start(width, height int) {
 	UpdateViewerSize(width, height)
 
 	windowsLock.Lock()
-	defer windowsLock.Unlock()
 
 	windowList = map[string]*windowObject{}
 
@@ -47,17 +46,15 @@ func Start(width, height int) {
 	}
 	mplusFaceSource = s
 
-	//Create window data
 	nw := DefaultWinSettings
 	nw.StartSize = V2i{X: width, Y: height}
+	windowsLock.Unlock()
 
-	go func() {
-		//Add the window
-		err = AddWindow("hud", nw)
-		if err != nil {
-			log.Fatal(err)
-		}
-	}()
+	err = AddWindow("hud", nw)
+	if err != nil {
+		log.Fatal(err)
+	}
+
 }
 
 // Run this in ebiten draw(), pass "screen"
