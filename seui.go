@@ -227,13 +227,6 @@ func clampWindows(width, height int) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
 
-	if width < minSizeX {
-		width = minSizeX
-	}
-	if height < minSizeY {
-		height = minSizeY
-	}
-
 	if width == viewerWidth && height == viewerHeight {
 		return
 	}
@@ -249,13 +242,15 @@ func clampWindows(width, height int) {
 			continue
 		}
 
-		if win.size.X > width {
-			win.size.X = width
-			changedSize = true
-		}
-		if win.size.Y > height {
-			win.size.Y = height
-			changedSize = true
+		if win.win.Resizable {
+			if win.size.X > width {
+				win.size.X = width
+				changedSize = true
+			}
+			if win.size.Y > height {
+				win.size.Y = height
+				changedSize = true
+			}
 		}
 
 		if win.position.X+win.size.X > width {
@@ -272,6 +267,14 @@ func clampWindows(width, height int) {
 	}
 }
 
-func UpdateViewerSize(width, height int) {
+func UpdateViewerSize(width, height int) (int, int) {
+	if width < minSizeX {
+		width = minSizeX
+	}
+	if height < minSizeY {
+		height = minSizeY
+	}
+
 	clampWindows(width, height)
+	return width, height
 }
