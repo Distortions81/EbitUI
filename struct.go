@@ -71,6 +71,7 @@ type WindowItemData struct {
 }
 
 type FlowDataType struct {
+	Parent     *WindowItemData
 	Dir        FLOW_DIR
 	Scrollable FLOW_DIR
 	Resizeable bool
@@ -79,4 +80,12 @@ type FlowDataType struct {
 
 type V2i struct {
 	X, Y int
+}
+
+type V2f struct {
+	X, Y float32
+}
+
+type V2f64 struct {
+	X, Y float64
 }
