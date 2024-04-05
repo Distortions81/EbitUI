@@ -27,10 +27,19 @@ var (
 	mplusFaceSource *text.GoTextFaceSource
 )
 
-func init() {
+// Init, with starting screen width and height
+func Start(width, height int) {
+	UpdateScreenSize(width, height)
+
+	windowsLock.Lock()
+	defer windowsLock.Unlock()
+
 	windowList = map[string]*windowObject{}
+
+	//Used for vectors
 	whiteImage.Fill(color.White)
 
+	//Load default font
 	s, err := text.NewGoTextFaceSource(bytes.NewReader(fonts.MPlus1pRegular_ttf))
 	if err != nil {
 		log.Fatal(err)
@@ -190,7 +199,7 @@ func CloseWindow(windowID string) error {
 }
 
 // Call his in Ebiten Layout
-func ClampWindows(width, height int) {
+func clampWindows(width, height int) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
 
@@ -220,8 +229,5 @@ func ClampWindows(width, height int) {
 }
 
 func UpdateScreenSize(width, height int) {
-	windowsLock.Lock()
-	defer windowsLock.Unlock()
-
-	screenWidth, screenHeight = width, height
+	clampWindows(width, height)
 }
