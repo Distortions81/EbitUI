@@ -53,7 +53,30 @@ func Start(width, height int) {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
 
+// Add a window. Returns true if added
+func AddWindow(windowID string, window WindowData) error {
+	windowsLock.Lock()
+	defer windowsLock.Unlock()
+	windowID = strings.ToLower(windowID)
+
+	newWin := &windowObject{win: window, dirty: true}
+
+	newWin.size = newWin.win.StartSize
+	if window.HasTitleBar {
+		newWin.size.Y += window.TitleSize
+	}
+	newWin.position = newWin.win.StartPosition
+	windowList[windowID] = newWin
+
+	newWin.drawCache = ebiten.NewImage(newWin.size.X, newWin.size.Y)
+	if newWin.drawCache == nil {
+		return errors.New("unable to create window draw cache")
+	}
+
+	newWin.drawCache.Fill(newWin.win.BGColor)
+	return nil
 }
 
 // Delete a window. Returns true if deleted
