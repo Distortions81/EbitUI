@@ -27,6 +27,12 @@ var (
 	mplusFaceSource *text.GoTextFaceSource
 )
 
+// Input updates, returns true if click was eaten
+func InputUpdate() bool {
+
+	return false
+}
+
 // Init, with starting screen width and height
 func Start(width, height int) {
 	UpdateViewerSize(width, height)
