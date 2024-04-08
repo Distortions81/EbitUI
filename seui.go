@@ -27,9 +27,47 @@ var (
 	mplusFaceSource *text.GoTextFaceSource
 )
 
-// Input updates, returns true if click was eaten
-func InputUpdate() bool {
+func GetRect(win *windowObject) FourV2i {
+	halfx, halfy := win.size.X/2, win.size.Y/2
+	rect := FourV2i{
+		TopLeft:     V2i{X: win.position.X - halfx, Y: win.position.Y - halfy},
+		TopRight:    V2i{X: win.position.X + halfx, Y: win.position.Y - halfy},
+		BottomLeft:  V2i{X: win.position.X - halfx, Y: win.position.Y + halfy},
+		BottomRight: V2i{X: win.position.X + halfx, Y: win.position.Y + halfy},
+	}
+	return rect
+}
 
+func UpdateWinPos(win *windowObject, pos V2i) {
+	win.position = pos
+	win.rect = GetRect(win)
+}
+
+func UpdateWinSize(win *windowObject, size V2i) {
+	win.size = size
+	win.rect = GetRect(win)
+}
+
+// Input update, returns if it ate: left click, right click, or ebiten.key
+func InputUpdate() (bool, bool, int) {
+	mx, my := ebiten.CursorPosition()
+
+	//Detect clicks within open windows
+	for _, item := range openWindows {
+		if PosWithinRect(V2i{X: mx, Y: my}, item.rect) {
+			return true, false, 0
+		}
+	}
+	return false, false, 0
+}
+
+func PosWithinRect(pos V2i, rect FourV2i) bool {
+	if pos.X >= rect.TopLeft.X &&
+		pos.Y >= rect.TopLeft.Y &&
+		pos.X <= rect.BottomRight.X &&
+		pos.Y <= rect.BottomRight.Y {
+		return true
+	}
 	return false
 }
 
