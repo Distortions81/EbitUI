@@ -25,6 +25,7 @@ type windowObject struct {
 
 	position,
 	size V2i
+	rect FourV2i
 
 	items        []WindowItemData
 	selectedItem *WindowItemData
@@ -76,6 +77,10 @@ type FlowDataType struct {
 	Scrollable FLOW_DIR
 	Resizeable bool
 	Children   []WindowItemData
+}
+
+type FourV2i struct {
+	TopLeft, TopRight, BottomLeft, BottomRight V2i
 }
 
 type V2i struct {
