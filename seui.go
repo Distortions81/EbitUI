@@ -27,7 +27,7 @@ var (
 	mplusFaceSource *text.GoTextFaceSource
 )
 
-func GetRect(win *windowObject) FourV2i {
+func GetBounds(win *windowObject) FourV2i {
 	halfx, halfy := win.size.X/2, win.size.Y/2
 	rect := FourV2i{
 		TopLeft:     V2i{X: win.position.X - halfx, Y: win.position.Y - halfy},
@@ -40,12 +40,12 @@ func GetRect(win *windowObject) FourV2i {
 
 func UpdateWinPos(win *windowObject, pos V2i) {
 	win.position = pos
-	win.rect = GetRect(win)
+	win.bounds = GetBounds(win)
 }
 
 func UpdateWinSize(win *windowObject, size V2i) {
 	win.size = size
-	win.rect = GetRect(win)
+	win.bounds = GetBounds(win)
 }
 
 // Input update, returns if it ate: left click, right click, or ebiten.key
