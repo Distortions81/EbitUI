@@ -54,7 +54,7 @@ func InputUpdate() (bool, bool, int) {
 
 	//Detect clicks within open windows
 	for _, item := range openWindows {
-		if PosWithinRect(V2i{X: mx, Y: my}, item.rect) {
+		if PosWithinRect(V2i{X: mx, Y: my}, item.bounds) {
 			return true, false, 0
 		}
 	}
