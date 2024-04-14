@@ -22,20 +22,22 @@ func InputUpdate() (bool, bool, int) {
 		//Detect clicks within open windows
 		for _, win := range openWindows {
 			if posWithinRect(mousePos, win.bounds) {
-				titleRect := FourV2i{
-					TopLeft:     win.bounds.TopLeft,
-					TopRight:    win.bounds.TopRight,
-					BottomLeft:  V2i{X: win.bounds.TopLeft.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
-					BottomRight: V2i{X: win.bounds.BottomRight.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
-				}
-				if posWithinRect(mousePos, titleRect) {
+				if posWithinRect(mousePos, win.titleBounds) {
 					log.Printf("Window %v: Drag on titlebar.\n", win.win.Title)
-					return true, false, 0
+
+					mouseDiff := posDiff(mousePos, lastMouse)
+					win.position = V2i{X: win.position.X + mouseDiff.X, Y: win.position.Y + mouseDiff.Y}
+					break
 				}
 			}
 		}
 
+		return true, false, 0
 	}
 
 	return false, false, 0
+}
+
+func posDiff(posA, posB V2i) V2i {
+	return V2i{X: posA.X - posB.X, Y: posA.Y - posB.Y}
 }

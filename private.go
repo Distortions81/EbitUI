@@ -52,15 +52,26 @@ func getGlobalBounds(win *windowObject) FourV2i {
 	return rect
 }
 
+func getTitleBounds(win *windowObject) FourV2i {
+	return FourV2i{
+		TopLeft:     win.bounds.TopLeft,
+		TopRight:    win.bounds.TopRight,
+		BottomLeft:  V2i{X: win.bounds.TopLeft.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
+		BottomRight: V2i{X: win.bounds.BottomRight.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
+	}
+}
+
 func updateWinPos(win *windowObject, pos V2i) {
 	win.position = pos
 	win.bounds = getGlobalBounds(win)
+	win.titleBounds = getTitleBounds(win)
 
 }
 
 func updateWinSize(win *windowObject, size V2i) {
 	win.size = size
 	win.bounds = getGlobalBounds(win)
+	win.titleBounds = getTitleBounds(win)
 }
 
 func posWithinRect(pos V2i, rect FourV2i) bool {

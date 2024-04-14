@@ -52,7 +52,8 @@ func AddWindow(windowID string, window WindowData) error {
 	if window.HasTitleBar {
 		newWin.size.Y += window.TitleSize
 	}
-	newWin.position = newWin.win.StartPosition
+
+	updateWinPos(newWin, window.StartPosition)
 	windowList[windowID] = newWin
 
 	newWin.drawCache = ebiten.NewImage(newWin.size.X, newWin.size.Y)
@@ -62,7 +63,6 @@ func AddWindow(windowID string, window WindowData) error {
 
 	newWin.drawCache.Fill(newWin.win.BGColor)
 
-	newWin.bounds = getGlobalBounds(newWin)
 	return nil
 }
 
