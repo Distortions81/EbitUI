@@ -24,12 +24,11 @@ var (
 )
 
 func getBounds(win *windowObject) FourV2i {
-	halfx, halfy := win.size.X/2, win.size.Y/2
 	rect := FourV2i{
-		TopLeft:     V2i{X: win.position.X - halfx, Y: win.position.Y - halfy},
-		TopRight:    V2i{X: win.position.X + halfx, Y: win.position.Y - halfy},
-		BottomLeft:  V2i{X: win.position.X - halfx, Y: win.position.Y + halfy},
-		BottomRight: V2i{X: win.position.X + halfx, Y: win.position.Y + halfy},
+		TopLeft:     V2i{X: win.position.X, Y: win.position.Y},
+		TopRight:    V2i{X: win.position.X, Y: win.position.Y},
+		BottomLeft:  V2i{X: win.position.X + win.size.X, Y: win.position.Y + win.size.Y},
+		BottomRight: V2i{X: win.position.X + win.size.X, Y: win.position.Y + win.size.Y},
 	}
 	return rect
 }
