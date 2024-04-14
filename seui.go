@@ -61,6 +61,8 @@ func AddWindow(windowID string, window WindowData) error {
 	}
 
 	newWin.drawCache.Fill(newWin.win.BGColor)
+
+	newWin.bounds = getBounds(newWin)
 	return nil
 }
 
@@ -124,17 +126,4 @@ func UpdateViewerSize(width, height int) (int, int) {
 // Run this in ebiten draw(), pass "screen"
 func DrawWindows(screen *ebiten.Image) {
 	drawWindows(screen)
-}
-
-// Input update, returns if it ate: left click, right click, or ebiten.key
-func InputUpdate() (bool, bool, int) {
-	mx, my := ebiten.CursorPosition()
-
-	//Detect clicks within open windows
-	for _, item := range openWindows {
-		if posWithinRect(V2i{X: mx, Y: my}, item.bounds) {
-			return true, false, 0
-		}
-	}
-	return false, false, 0
 }
