@@ -23,24 +23,44 @@ var (
 	mplusFaceSource *text.GoTextFaceSource
 )
 
-func getBounds(win *windowObject) FourV2i {
+func localToGlobal(local, objPos V2i) V2i {
+	return V2i{X: local.X + objPos.X, Y: local.Y + objPos.Y}
+}
+
+func globalToLocal(global, objPos V2i) V2i {
+	return V2i{X: global.X - objPos.X, Y: global.Y - objPos.Y}
+}
+
+func getLocalBounds(win *windowObject) FourV2i {
+	rect := FourV2i{
+		TopLeft:     V2i{X: 0, Y: 0},
+		TopRight:    V2i{X: win.size.X, Y: 0},
+		BottomLeft:  V2i{X: 0, Y: win.size.Y},
+		BottomRight: V2i{X: win.size.X, Y: win.size.Y},
+	}
+	return rect
+}
+
+func getGlobalBounds(win *windowObject) FourV2i {
+
 	rect := FourV2i{
 		TopLeft:     V2i{X: win.position.X, Y: win.position.Y},
-		TopRight:    V2i{X: win.position.X, Y: win.position.Y},
-		BottomLeft:  V2i{X: win.position.X + win.size.X, Y: win.position.Y + win.size.Y},
-		BottomRight: V2i{X: win.position.X + win.size.X, Y: win.position.Y + win.size.Y},
+		TopRight:    V2i{X: win.size.X + win.position.X, Y: win.position.Y},
+		BottomLeft:  V2i{X: win.position.X, Y: win.size.Y + win.position.Y},
+		BottomRight: V2i{X: win.size.X + win.position.X, Y: win.size.Y + win.position.Y},
 	}
 	return rect
 }
 
 func updateWinPos(win *windowObject, pos V2i) {
 	win.position = pos
-	win.bounds = getBounds(win)
+	win.bounds = getGlobalBounds(win)
+
 }
 
 func updateWinSize(win *windowObject, size V2i) {
 	win.size = size
-	win.bounds = getBounds(win)
+	win.bounds = getGlobalBounds(win)
 }
 
 func posWithinRect(pos V2i, rect FourV2i) bool {

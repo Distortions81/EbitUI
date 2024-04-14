@@ -25,7 +25,9 @@ type windowObject struct {
 
 	position,
 	size V2i
-	bounds FourV2i
+
+	bounds,
+	titleBounds FourV2i
 
 	items        []WindowItemData
 	selectedItem *WindowItemData

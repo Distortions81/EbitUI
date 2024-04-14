@@ -62,7 +62,7 @@ func AddWindow(windowID string, window WindowData) error {
 
 	newWin.drawCache.Fill(newWin.win.BGColor)
 
-	newWin.bounds = getBounds(newWin)
+	newWin.bounds = getGlobalBounds(newWin)
 	return nil
 }
 
