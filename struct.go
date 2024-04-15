@@ -31,7 +31,8 @@ type windowObject struct {
 	oldSize V2i
 
 	bounds,
-	titleBounds FourV2i
+	titleBounds,
+	closeBounds FourV2i
 
 	items        []WindowItemData
 	selectedItem *WindowItemData
@@ -39,7 +40,7 @@ type windowObject struct {
 	drawCache *ebiten.Image
 
 	open, focused, mouseOver,
-	dirty bool
+	clean bool
 }
 
 type WindowData struct {
@@ -51,7 +52,7 @@ type WindowData struct {
 
 	Closable, AutoCentered,
 	Borderless, Movable, CachePersist,
-	Resizable, KeepPosition, HasTitleBar bool
+	Resizable, KeepPosition, HasTitleBar, Maxmized bool
 
 	TitleColor,
 	TitleBGColor,

@@ -19,25 +19,21 @@ func Start(width, height int) {
 	windowsLock.Lock()
 
 	windowList = map[WindowID]*windowObject{}
+	openWindows = nil
 
 	//Used for vectors
 	whiteImage.Fill(color.White)
 
 	//Load default font
-	s, err := text.NewGoTextFaceSource(bytes.NewReader(fonts.MPlus1pRegular_ttf))
-	if err != nil {
-		log.Fatal(err)
+	if mplusFaceSource == nil {
+		s, err := text.NewGoTextFaceSource(bytes.NewReader(fonts.MPlus1pRegular_ttf))
+		if err != nil {
+			log.Fatal(err)
+		}
+		mplusFaceSource = s
 	}
-	mplusFaceSource = s
 
-	nw := DefaultWinSettings
-	nw.StartSize = V2i{X: width, Y: height}
 	windowsLock.Unlock()
-
-	err = AddWindow("hud", nw)
-	if err != nil {
-		log.Fatal(err)
-	}
 }
 
 // Add a window. Returns true if added
@@ -46,7 +42,7 @@ func AddWindow(windowID string, window WindowData) error {
 	defer windowsLock.Unlock()
 	windowID = strings.ToLower(windowID)
 
-	newWin := &windowObject{win: window, dirty: true}
+	newWin := &windowObject{win: window}
 
 	newWin.size = newWin.win.StartSize
 	if window.HasTitleBar {
@@ -55,14 +51,6 @@ func AddWindow(windowID string, window WindowData) error {
 
 	newWin.updateWin()
 	windowList[WindowID(windowID)] = newWin
-
-	newWin.drawCache = ebiten.NewImage(newWin.size.X, newWin.size.Y)
-	if newWin.drawCache == nil {
-		return errors.New("unable to create window draw cache")
-	}
-
-	newWin.drawCache.Fill(newWin.win.BGColor)
-
 	return nil
 }
 
@@ -97,6 +85,7 @@ func OpenWindow(windowID string) error {
 				}
 			}
 			openWindows = append(openWindows, window)
+			window.updateWin()
 		}
 		return nil
 	}

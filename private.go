@@ -49,20 +49,31 @@ func (win *windowObject) updateWin() {
 	if win.size != win.oldSize {
 		win.oldSize = win.size
 		win.drawCache = ebiten.NewImage(win.size.X, win.size.Y)
-		win.dirty = true
+		win.clean = false
 	}
 
-	win.bounds = FourV2i{
-		TopLeft:     V2i{X: win.position.X, Y: win.position.Y},
-		TopRight:    V2i{X: win.size.X + win.position.X, Y: win.position.Y},
-		BottomLeft:  V2i{X: win.position.X, Y: win.size.Y + win.position.Y},
-		BottomRight: V2i{X: win.size.X + win.position.X, Y: win.size.Y + win.position.Y},
+	if win.win.Maxmized {
+		win.bounds = FourV2i{
+			TopLeft:     V2i{X: 0, Y: 0},
+			TopRight:    V2i{X: viewerWidth, Y: 0},
+			BottomLeft:  V2i{X: 0, Y: viewerHeight},
+			BottomRight: V2i{X: viewerWidth, Y: viewerHeight},
+		}
+	} else {
+		win.bounds = FourV2i{
+			TopLeft:     V2i{X: win.position.X, Y: win.position.Y},
+			TopRight:    V2i{X: win.size.X + win.position.X, Y: win.position.Y},
+			BottomLeft:  V2i{X: win.position.X, Y: win.size.Y + win.position.Y},
+			BottomRight: V2i{X: win.size.X + win.position.X, Y: win.size.Y + win.position.Y},
+		}
 	}
-	win.titleBounds = FourV2i{
-		TopLeft:     win.bounds.TopLeft,
-		TopRight:    win.bounds.TopRight,
-		BottomLeft:  V2i{X: win.bounds.TopLeft.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
-		BottomRight: V2i{X: win.bounds.BottomRight.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
+	if win.win.HasTitleBar {
+		win.titleBounds = FourV2i{
+			TopLeft:     win.bounds.TopLeft,
+			TopRight:    win.bounds.TopRight,
+			BottomLeft:  V2i{X: win.bounds.TopLeft.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
+			BottomRight: V2i{X: win.bounds.BottomRight.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
+		}
 	}
 }
 
@@ -101,8 +112,8 @@ func closeWindow(windowID string) error {
 }
 
 func (win *windowObject) redraw() {
-	if win.dirty {
-		win.dirty = false
+	if !win.clean {
+		win.clean = true
 		win.drawCache.Fill(win.win.BGColor)
 	}
 }

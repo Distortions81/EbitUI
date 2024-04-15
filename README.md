@@ -18,9 +18,6 @@ Init seGUI
 
 These can be whatever you like, but they are converted to lowercase.
 
-One reserved name is "hud" and will already exist.
-
-
 ## seGUI.DrawWindows(screen)
 
 Render windows to the screen. Use this in Draw() at the end.
