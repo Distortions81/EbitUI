@@ -1,5 +1,5 @@
 # EbitUI
-A simple UI library written in [Go](https://go.dev/) for [Ebitengine](https://ebitengine.org/).
+A simple retained-mode UI library written in [Go](https://go.dev/) for [Ebitengine](https://ebitengine.org/)
 
 ## Development is just begining.
 Don't use this unless you are insane.
