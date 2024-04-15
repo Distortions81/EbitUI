@@ -12,7 +12,7 @@ import (
 
 var (
 	viewerWidth, viewerHeight int
-	windowList                map[string]*windowObject
+	windowList                map[WindowID]*windowObject
 	openWindows               []*windowObject
 
 	windowsLock sync.Mutex
@@ -23,37 +23,42 @@ var (
 	mplusFaceSource *text.GoTextFaceSource
 )
 
-func localToGlobal(local, objPos V2i) V2i {
-	return V2i{X: local.X + objPos.X, Y: local.Y + objPos.Y}
+func (posA V2i) addPos(posB V2i) V2i {
+	return V2i{X: posA.X + posB.X, Y: posA.Y + posB.Y}
 }
 
-func globalToLocal(global, objPos V2i) V2i {
-	return V2i{X: global.X - objPos.X, Y: global.Y - objPos.Y}
+func (posA V2i) subPos(posB V2i) V2i {
+	return V2i{X: posA.X - posB.X, Y: posA.Y - posB.Y}
 }
 
-func getLocalBounds(win *windowObject) FourV2i {
-	rect := FourV2i{
-		TopLeft:     V2i{X: 0, Y: 0},
-		TopRight:    V2i{X: win.size.X, Y: 0},
-		BottomLeft:  V2i{X: 0, Y: win.size.Y},
-		BottomRight: V2i{X: win.size.X, Y: win.size.Y},
+func (win *windowObject) updateWin() {
+
+	if win.position.X+win.size.X > viewerWidth {
+		win.position.X = (viewerWidth - win.size.X)
 	}
-	return rect
-}
+	if win.position.Y+win.size.Y > viewerHeight {
+		win.position.Y = (viewerHeight - win.size.Y)
+	}
+	if win.position.X < 0 {
+		win.position.X = 0
+	}
+	if win.position.Y < 0 {
+		win.position.Y = 0
+	}
 
-func getGlobalBounds(win *windowObject) FourV2i {
+	if win.size != win.oldSize {
+		win.oldSize = win.size
+		win.drawCache = ebiten.NewImage(win.size.X, win.size.Y)
+		win.dirty = true
+	}
 
-	rect := FourV2i{
+	win.bounds = FourV2i{
 		TopLeft:     V2i{X: win.position.X, Y: win.position.Y},
 		TopRight:    V2i{X: win.size.X + win.position.X, Y: win.position.Y},
 		BottomLeft:  V2i{X: win.position.X, Y: win.size.Y + win.position.Y},
 		BottomRight: V2i{X: win.size.X + win.position.X, Y: win.size.Y + win.position.Y},
 	}
-	return rect
-}
-
-func getTitleBounds(win *windowObject) FourV2i {
-	return FourV2i{
+	win.titleBounds = FourV2i{
 		TopLeft:     win.bounds.TopLeft,
 		TopRight:    win.bounds.TopRight,
 		BottomLeft:  V2i{X: win.bounds.TopLeft.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
@@ -61,20 +66,7 @@ func getTitleBounds(win *windowObject) FourV2i {
 	}
 }
 
-func updateWinPos(win *windowObject, pos V2i) {
-	win.position = pos
-	win.bounds = getGlobalBounds(win)
-	win.titleBounds = getTitleBounds(win)
-
-}
-
-func updateWinSize(win *windowObject, size V2i) {
-	win.size = size
-	win.bounds = getGlobalBounds(win)
-	win.titleBounds = getTitleBounds(win)
-}
-
-func posWithinRect(pos V2i, rect FourV2i) bool {
+func (rect FourV2i) posWithinRect(pos V2i) bool {
 	if pos.X >= rect.TopLeft.X &&
 		pos.Y >= rect.TopLeft.Y &&
 		pos.X <= rect.BottomRight.X &&
@@ -87,7 +79,7 @@ func posWithinRect(pos V2i, rect FourV2i) bool {
 func closeWindow(windowID string) error {
 	windowID = strings.ToLower(windowID)
 
-	window := windowList[windowID]
+	window := windowList[WindowID(windowID)]
 
 	if window != nil {
 		if window.open {
@@ -108,7 +100,7 @@ func closeWindow(windowID string) error {
 	return errors.New("unable to find window")
 }
 
-func updateWindowCache(win *windowObject) {
+func (win *windowObject) updateWindowCache() {
 	if win.dirty {
 		win.dirty = false
 		win.drawCache.Fill(win.win.BGColor)
@@ -116,9 +108,11 @@ func updateWindowCache(win *windowObject) {
 }
 
 // Call this in Ebiten Layout
-func clampWindows(width, height int) {
+func clampWindows() {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
+
+	width, height := viewerWidth, viewerHeight
 
 	if width == viewerWidth && height == viewerHeight {
 		return
@@ -144,14 +138,10 @@ func clampWindows(width, height int) {
 				win.size.Y = height
 				changedSize = true
 			}
+
 		}
 
-		if win.position.X+win.size.X > width {
-			win.position.X = (width - win.size.X)
-		}
-		if win.position.Y+win.size.Y > height {
-			win.position.Y = (height - win.size.Y)
-		}
+		win.updateWin()
 
 		if changedSize {
 			win.drawCache = ebiten.NewImage(win.size.X, win.size.Y)

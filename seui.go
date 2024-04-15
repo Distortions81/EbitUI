@@ -18,7 +18,7 @@ func Start(width, height int) {
 
 	windowsLock.Lock()
 
-	windowList = map[string]*windowObject{}
+	windowList = map[WindowID]*windowObject{}
 
 	//Used for vectors
 	whiteImage.Fill(color.White)
@@ -53,8 +53,8 @@ func AddWindow(windowID string, window WindowData) error {
 		newWin.size.Y += window.TitleSize
 	}
 
-	updateWinPos(newWin, window.StartPosition)
-	windowList[windowID] = newWin
+	newWin.updateWin()
+	windowList[WindowID(windowID)] = newWin
 
 	newWin.drawCache = ebiten.NewImage(newWin.size.X, newWin.size.Y)
 	if newWin.drawCache == nil {
@@ -72,8 +72,8 @@ func DeleteWindow(windowID string) error {
 	defer windowsLock.Unlock()
 	windowID = strings.ToLower(windowID)
 
-	if windowList[windowID] != nil {
-		delete(windowList, windowID)
+	if windowList[WindowID(windowID)] != nil {
+		delete(windowList, WindowID(windowID))
 		return nil
 	}
 
@@ -85,7 +85,7 @@ func OpenWindow(windowID string) error {
 	defer windowsLock.Unlock()
 	windowID = strings.ToLower(windowID)
 
-	window := windowList[windowID]
+	window := windowList[WindowID(windowID)]
 
 	if window != nil {
 		if !window.open {
@@ -119,7 +119,7 @@ func UpdateViewerSize(width, height int) (int, int) {
 		height = minSizeY
 	}
 
-	clampWindows(width, height)
+	clampWindows()
 	return width, height
 }
 

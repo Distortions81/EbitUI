@@ -6,6 +6,8 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
+type WindowID string
+
 var DefaultWinSettings = WindowData{
 	Title:       "Window",
 	TitleSize:   24,
@@ -24,7 +26,9 @@ type windowObject struct {
 	win WindowData
 
 	position,
-	size V2i
+	oldPos,
+	size,
+	oldSize V2i
 
 	bounds,
 	titleBounds FourV2i
@@ -34,7 +38,7 @@ type windowObject struct {
 
 	drawCache *ebiten.Image
 
-	open, focused, mouseon,
+	open, focused, mouseOver,
 	dirty bool
 }
 
