@@ -12,7 +12,10 @@ Draw a window, with a title and a close X
 
 Make window draggable
 
+Make window closable
+
 Screenshot:
+
 ![Screenshot of some basic code and a basic window](Example/example.png)
 
 ## Example code
