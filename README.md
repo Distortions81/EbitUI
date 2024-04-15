@@ -42,4 +42,4 @@ Closes the window "window id" (if found)
 ## EbitUI.UpdateViewerSize(width, height) (width, height)
 Updates the viewer size. This will prevent windows from going off the screen and will resize maximized windows
 
-Keeps window from resized to extremely small sizes (return value)
+Prevents window from being resized to extremely small sizes (return value)
