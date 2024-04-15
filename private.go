@@ -23,12 +23,25 @@ var (
 	mplusFaceSource *text.GoTextFaceSource
 )
 
-func (posA V2i) addPos(posB V2i) V2i {
+func (posA *V2i) addPos(posB V2i) V2i {
 	return V2i{X: posA.X + posB.X, Y: posA.Y + posB.Y}
 }
 
 func (posA V2i) subPos(posB V2i) V2i {
 	return V2i{X: posA.X - posB.X, Y: posA.Y - posB.Y}
+}
+
+func (pos *V2i) clampToViewer() {
+	if pos.X < 0 {
+		pos.X = 0
+	} else if pos.X > viewerWidth {
+		pos.X = viewerWidth
+	}
+	if pos.Y < 0 {
+		pos.Y = 0
+	} else if pos.Y > viewerHeight {
+		pos.Y = viewerHeight
+	}
 }
 
 func (win *windowObject) updateWin() {
@@ -119,11 +132,9 @@ func (win *windowObject) redraw() {
 }
 
 // Call this in Ebiten Layout
-func clampWindows() {
+func clampWindows(width, height int) {
 	windowsLock.Lock()
 	defer windowsLock.Unlock()
-
-	width, height := viewerWidth, viewerHeight
 
 	if width == viewerWidth && height == viewerHeight {
 		return

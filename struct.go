@@ -40,7 +40,7 @@ type windowObject struct {
 	drawCache *ebiten.Image
 
 	open, focused, mouseOver,
-	clean bool
+	clean, dragging bool
 }
 
 type WindowData struct {

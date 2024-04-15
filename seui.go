@@ -110,7 +110,7 @@ func UpdateViewerSize(width, height int) (int, int) {
 		height = minSizeY
 	}
 
-	clampWindows()
+	clampWindows(width, height)
 	return width, height
 }
 
