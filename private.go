@@ -66,7 +66,7 @@ func (win *windowObject) updateWin() {
 	}
 }
 
-func (rect FourV2i) posWithinRect(pos V2i) bool {
+func (rect FourV2i) contains(pos V2i) bool {
 	if pos.X >= rect.TopLeft.X &&
 		pos.Y >= rect.TopLeft.Y &&
 		pos.X <= rect.BottomRight.X &&
@@ -100,7 +100,7 @@ func closeWindow(windowID string) error {
 	return errors.New("unable to find window")
 }
 
-func (win *windowObject) updateWindowCache() {
+func (win *windowObject) redraw() {
 	if win.dirty {
 		win.dirty = false
 		win.drawCache.Fill(win.win.BGColor)
@@ -120,32 +120,7 @@ func clampWindows() {
 
 	viewerWidth, viewerHeight = width, height
 
-	changedSize := false
-	for w, win := range windowList {
-		if win.id == "hud" {
-			win.drawCache = ebiten.NewImage(width, height)
-			win.dirty = true
-			windowList[w].size = V2i{X: width, Y: height}
-			continue
-		}
-
-		if win.win.Resizable {
-			if win.size.X > width {
-				win.size.X = width
-				changedSize = true
-			}
-			if win.size.Y > height {
-				win.size.Y = height
-				changedSize = true
-			}
-
-		}
-
+	for _, win := range windowList {
 		win.updateWin()
-
-		if changedSize {
-			win.drawCache = ebiten.NewImage(win.size.X, win.size.Y)
-			win.dirty = true
-		}
 	}
 }

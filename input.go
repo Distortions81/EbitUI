@@ -19,7 +19,7 @@ func InputUpdate() (bool, bool, int) {
 
 		//Detect clicks within open windows
 		for _, win := range openWindows {
-			if win.titleBounds.posWithinRect(mousePos) {
+			if win.titleBounds.contains(mousePos) {
 
 				mouseDiff := mousePos.subPos(lastMouse)
 				win.position = V2i{X: win.position.X + mouseDiff.X, Y: win.position.Y + mouseDiff.Y}

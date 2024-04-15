@@ -14,7 +14,7 @@ func drawWindows(screen *ebiten.Image) {
 
 	for _, win := range openWindows {
 
-		win.updateWindowCache()
+		win.redraw()
 
 		//Draw window
 		op := &ebiten.DrawImageOptions{}
