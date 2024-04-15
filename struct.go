@@ -47,8 +47,8 @@ type WindowData struct {
 	Title     string
 	TitleSize int
 
-	StartPosition,
-	StartSize V2i
+	Position,
+	Size V2i
 
 	Closable, AutoCentered,
 	Borderless, Movable, CachePersist,

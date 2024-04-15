@@ -44,7 +44,9 @@ func AddWindow(windowID string, window WindowData) error {
 
 	newWin := &windowObject{win: window}
 
-	newWin.size = newWin.win.StartSize
+	newWin.size = newWin.win.Size
+	newWin.position = newWin.win.Position
+
 	if window.HasTitleBar {
 		newWin.size.Y += window.TitleSize
 	}
