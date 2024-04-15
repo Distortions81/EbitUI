@@ -18,7 +18,7 @@ func Start(width, height int) {
 
 	windowsLock.Lock()
 
-	windowList = map[WindowID]*windowObject{}
+	windowList = map[string]*windowObject{}
 	openWindows = nil
 
 	//Used for vectors
@@ -52,7 +52,7 @@ func AddWindow(windowID string, window WindowData) error {
 	}
 
 	newWin.updateWin()
-	windowList[WindowID(windowID)] = newWin
+	windowList[windowID] = newWin
 	return nil
 }
 
@@ -62,8 +62,8 @@ func DeleteWindow(windowID string) error {
 	defer windowsLock.Unlock()
 	windowID = strings.ToLower(windowID)
 
-	if windowList[WindowID(windowID)] != nil {
-		delete(windowList, WindowID(windowID))
+	if windowList[windowID] != nil {
+		delete(windowList, windowID)
 		return nil
 	}
 
@@ -75,7 +75,7 @@ func OpenWindow(windowID string) error {
 	defer windowsLock.Unlock()
 	windowID = strings.ToLower(windowID)
 
-	window := windowList[WindowID(windowID)]
+	window := windowList[windowID]
 
 	if window != nil {
 		if !window.open {

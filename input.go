@@ -43,9 +43,19 @@ func InputUpdate() (bool, bool, int) {
 				return true, false, 0
 			}
 		}
-	} else {
-		dragWindow = ""
+	} else if inpututil.IsMouseButtonJustPressed(ebiten.MouseButtonLeft) {
+
+		for _, win := range openWindows {
+			if win.closeBounds.contains(mousePos) {
+				closeWindow(win.id)
+				return true, false, 0
+			}
+		}
 	}
 
+	//Reset window drag
+	if dragWindow != "" {
+		dragWindow = ""
+	}
 	return false, false, 0
 }

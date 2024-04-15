@@ -6,8 +6,6 @@ import (
 	"github.com/hajimehoshi/ebiten/v2"
 )
 
-type WindowID string
-
 var DefaultWinSettings = WindowData{
 	Title:       "Window",
 	TitleSize:   24,

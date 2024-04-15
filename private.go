@@ -12,7 +12,7 @@ import (
 
 var (
 	viewerWidth, viewerHeight int
-	windowList                map[WindowID]*windowObject
+	windowList                map[string]*windowObject
 	openWindows               []*windowObject
 
 	windowsLock sync.Mutex
@@ -87,6 +87,12 @@ func (win *windowObject) updateWin() {
 			BottomLeft:  V2i{X: win.bounds.TopLeft.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
 			BottomRight: V2i{X: win.bounds.BottomRight.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
 		}
+		win.closeBounds = FourV2i{
+			TopLeft:     V2i{X: win.bounds.TopRight.X - win.win.TitleSize, Y: win.bounds.TopRight.Y},
+			TopRight:    win.bounds.TopRight,
+			BottomLeft:  V2i{X: win.bounds.TopRight.X - win.win.TitleSize, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
+			BottomRight: V2i{X: win.bounds.TopRight.X, Y: win.bounds.TopLeft.Y + win.win.TitleSize},
+		}
 	}
 }
 
@@ -102,22 +108,32 @@ func (rect FourV2i) contains(pos V2i) bool {
 
 func closeWindow(windowID string) error {
 	windowID = strings.ToLower(windowID)
+	var window *windowObject
 
-	window := windowList[WindowID(windowID)]
+	for _, win := range openWindows {
+		if win.id == windowID {
+			window = win
+			break
+		}
+	}
 
 	if window != nil {
 		if window.open {
 			window.open = false
 
 			numOpen := len(openWindows) - 1
+			if numOpen == 0 {
+				openWindows = []*windowObject{}
+				return nil
+			}
 			for w := numOpen; numOpen > 0; numOpen-- {
 				if openWindows[w].id != windowID {
-
-					//Delete item
 					openWindows = append(openWindows[:w], openWindows[w+1:]...)
+					return nil
 				}
 			}
 		}
+
 		return nil
 	}
 
