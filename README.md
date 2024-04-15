@@ -15,9 +15,8 @@ Make window draggable
 Screenshot:
 ![Screenshot of some basic code and a basic window](Example/example.png)
 
-Example is in the 'Example' directory.
-
-(click launch package in vscode)
+## Example code
+[Example code directory](https://github.com/Distortions81/EbitUI/tree/main/Example)
 
 ## EbitUI.Start(width, height)
 Init EbitUI
