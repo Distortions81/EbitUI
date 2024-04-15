@@ -36,12 +36,12 @@ func drawWindows(screen *ebiten.Image) {
 			SecondaryAlign: text.AlignStart,
 		}
 		tdop := ebiten.DrawImageOptions{}
-		tdop.GeoM.Translate(float64(win.position.X+2), float64(win.position.Y-2))
+		tdop.GeoM.Translate(float64(win.position.X+2), float64(win.position.Y-1))
 
 		top := &text.DrawOptions{DrawImageOptions: tdop, LayoutOptions: loo}
 		text.Draw(screen, win.win.Title, &text.GoTextFace{
 			Source: mplusFaceSource,
-			Size:   float64(win.win.TitleSize - 4),
+			Size:   float64(win.win.TitleSize - 6),
 		}, top)
 
 		//Draw close X
