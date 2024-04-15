@@ -1,4 +1,4 @@
-package seGUI
+package EbitUI
 
 import (
 	"bytes"

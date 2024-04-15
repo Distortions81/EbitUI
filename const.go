@@ -1,4 +1,4 @@
-package seGUI
+package EbitUI
 
 const minSizeX = 1200
 const minSizeY = 700

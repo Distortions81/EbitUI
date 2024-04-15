@@ -1,4 +1,4 @@
-package seGUI
+package EbitUI
 
 import (
 	"github.com/hajimehoshi/ebiten/v2"

@@ -1,4 +1,4 @@
-module github.com/Distortions81/seGUI
+module github.com/Distortions81/EbitUI
 
 go 1.22.0
 
