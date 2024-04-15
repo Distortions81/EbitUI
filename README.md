@@ -4,7 +4,7 @@ A simple UI library written in [Go](https://go.dev/) for [Ebitengine](https://eb
 ## Development is just begining.
 Don't use this unless you are insane.
 
-## TO DO: Everything
+## TO DO: Almost everything!
 ### Completed:
 Draw a window, with a title and a close X
 
