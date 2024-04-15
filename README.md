@@ -1,4 +1,4 @@
-# seGUI
+# EbitUI
 
 A simple UI library written in [Go](https://go.dev/) for [Ebitengine](https://ebitengine.org/).
 
@@ -9,40 +9,40 @@ A simple UI library written in [Go](https://go.dev/) for [Ebitengine](https://eb
 
 ![Screenshot of some basic code and a basic window](example.png)
 
-## seGUI.Start()
+## EbitUI.Start()
 
-Init seGUI
+Init EbitUI
 
 
 ## Window IDs (string)
 
 These can be whatever you like, but they are converted to lowercase.
 
-## seGUI.DrawWindows(screen)
+## EbitUI.DrawWindows(screen)
 
 Render windows to the screen. Use this in Draw() at the end.
 
 
-## seGUI.AddWindow("window id", windowData)
+## EbitUI.AddWindow("window id", windowData)
 
 Adds a window called "window id" to the window list
 
 
-## seGUI.DeleteWindow("window id")
+## EbitUI.DeleteWindow("window id")
 
 Deletes a window called "window id" from the window list (if found)
 
 
-## seGUI.OpenWindow("window id")
+## EbitUI.OpenWindow("window id")
 
 Opens the window "window id" (if found)
 
 
-## seGUI.CloseWindow("window id")
+## EbitUI.CloseWindow("window id")
 
 Closes the window "window id" (if found)
 
 
-## seGUI.UpdateViewerSize(width, height int)
+## EbitUI.UpdateViewerSize(width, height int)
 
 Updates the viewer size. This will prevent windows from going off the screen and will resize the hud.
