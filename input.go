@@ -28,7 +28,7 @@ func InputUpdate() (bool, bool, int) {
 		//Detect clicks within open windows
 		for _, win := range openWindows {
 			if dragWindow == win.id ||
-				win.titleBounds.contains(mousePos) {
+				(dragWindow == "" && win.titleBounds.contains(mousePos)) {
 				mouseDiff := mousePos.subPos(lastMouse)
 
 				dragWindow = win.id
