@@ -9,6 +9,8 @@ A simple UI library written in [Go](https://go.dev/) for [Ebitengine](https://eb
 
 ![Screenshot of some basic code and a basic window](Example/example.png)
 
+Example is in the 'Example' directory.
+
 ## EbitUI.Start()
 
 Init EbitUI
