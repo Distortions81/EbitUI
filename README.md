@@ -15,6 +15,8 @@ Screenshot:
 
 Example is in the 'Example' directory.
 
+(click launch package in vscode)
+
 ## EbitUI.Start(width, height)
 Init EbitUI
 
