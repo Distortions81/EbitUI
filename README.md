@@ -4,6 +4,7 @@ A simple [retained-mode](https://en.wikipedia.org/wiki/Retained_mode) UI library
 (with draw caching!)
 
 ## Extremely early development. Don't use this for anything.
+I warned you ;)
 
 ## TO DO: Almost everything!
 ### Completed:
