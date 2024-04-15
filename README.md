@@ -1,8 +1,9 @@
 # EbitUI
-A simple retained-mode UI library written in [Go](https://go.dev/) for [Ebitengine](https://ebitengine.org/)
+A simple [retained-mode](https://en.wikipedia.org/wiki/Retained_mode) UI library written in [Go](https://go.dev/) for [Ebitengine](https://ebitengine.org/)
 
-## Development is just begining.
-Don't use this unless you are insane.
+(with draw caching!)
+
+## Extremely early development. Don't use this for anything.
 
 ## TO DO: Almost everything!
 ### Completed:
